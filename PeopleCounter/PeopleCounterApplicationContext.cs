@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -8,54 +9,67 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
+
 namespace PeopleCounter
 {
     public class PeopleCounterApplicationContext : System.Windows.Forms.ApplicationContext
     {
-        private System.Windows.Forms.NotifyIcon ChildNotifyIcon;
-        private System.Windows.Forms.NotifyIcon AdultNotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem exitMenuItem;
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-        private const string csvHeader = "Art;Jahr;Monat;Tag;Datum;Uhrzeit";
-        /// <summary>
-        private CounterType Adult = new CounterType()
-        {
-            BackgroundColor = Color.Blue,
-            ForegroundColor = Brushes.White,
-            IconText = "Gezählte Erwachsene: ",
-            CSVIdentifier = "Erwachsener"
+        private System.Windows.Forms.ToolStripMenuItem openFolderMenuItem;
+        private Dictionary<NotifyIcon, CounterType> iconMapping = new Dictionary<NotifyIcon, CounterType>();
 
-        };
-        private CounterType Child = new CounterType()
-        {
-            BackgroundColor = Color.Yellow,
-            ForegroundColor = Brushes.Black,
-            IconText = "Gezählte Kinder: ",
-            CSVIdentifier = "Kind"
-        };
+        private System.ComponentModel.IContainer components = null;
+        private readonly string csvHeader;
+        private readonly string csvDelimiter;
+        private readonly string loggedDateTimeFormat;
 
         private string csvFolderPath;
         private StreamWriter yearFile;
         private StreamWriter monthFile;
-        private DateTime date = DateTime.Now;
         private bool writeMonthlyFile = false;
         public PeopleCounterApplicationContext()
         {
             InitializeComponent();
-            Adult.Icon = AdultNotifyIcon;
-            Child.Icon = ChildNotifyIcon;
 
-            UpdateIcon(Adult);
-            UpdateIcon(Child);
-            ChildNotifyIcon.Visible = true;
-            AdultNotifyIcon.Visible = true;
+            csvHeader = ConfigurationManager.AppSettings["csvHeader"];
+            csvDelimiter = ConfigurationManager.AppSettings["csvDelimiter"];
+            loggedDateTimeFormat = ConfigurationManager.AppSettings["loggedDateTimeFormat"];
+            csvFolderPath = ConfigurationManager.AppSettings["folder"];
+            writeMonthlyFile = ConfigurationManager.AppSettings["monthFile"] == "true";
+            var counterTypeSection = (CounterTypeSection)ConfigurationManager.GetSection("counterTypeSection");
+            for (var i = 0; i < counterTypeSection.CounterTypes.Count; i++)
+            {
+                CounterTypeElement counterTypeElement = counterTypeSection.CounterTypes[i];
+                var icon = new System.Windows.Forms.NotifyIcon(this.components);
+                CounterType counterType = new CounterType()
+                {
+                    BackgroundColor = Color.FromName(counterTypeElement.BackGroundColor),
+                    ForegroundColor = new SolidBrush(Color.FromName(counterTypeElement.ForeGroundColor)),
+                    IconText = counterTypeElement.IconText,
+                    CSVIdentifier = counterTypeElement.CsvIdentifier,
+                    Icon = icon
 
-            csvFolderPath = System.Configuration.ConfigurationSettings.AppSettings["folder"];
-            writeMonthlyFile = System.Configuration.ConfigurationSettings.AppSettings["monthFile"] == "true";
+
+                };
+                iconMapping.Add(icon, counterType);
+
+            }
+
+
+            foreach (var icon in iconMapping.Keys)
+            {
+                var counterType = iconMapping[icon];
+
+                icon.ContextMenuStrip = this.contextMenu;
+                icon.Text = counterType.IconText;
+                icon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.countClick);
+                icon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.countClick);
+
+                UpdateIcon(counterType);
+                icon.Visible = true;
+            }
             EnsureFiles();
         }
         /// <summary>
@@ -65,24 +79,16 @@ namespace PeopleCounter
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.ChildNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AdultNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.openFolderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
-            // 
-            // ChildNotifyIcon
-            // 
-            this.ChildNotifyIcon.ContextMenuStrip = this.contextMenu;
-            this.ChildNotifyIcon.Text = "Child";
-            this.ChildNotifyIcon.Visible = true;
-            this.ChildNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.childMouseClick);
-            this.ChildNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.childMouseClick);
             // 
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitMenuItem});
+                this.openFolderMenuItem,
+                this.exitMenuItem});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.Size = new System.Drawing.Size(121, 26);
             // 
@@ -93,21 +99,20 @@ namespace PeopleCounter
             this.exitMenuItem.Text = "Beenden";
             this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
-            // AdultNotifyIcon
+            // openFolderMenuItem
             // 
-            this.AdultNotifyIcon.ContextMenuStrip = this.contextMenu;
-            this.AdultNotifyIcon.Text = "notifyIcon2";
-            this.AdultNotifyIcon.Visible = true;
-            this.AdultNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.adultMouseClick);
-            this.AdultNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.adultMouseClick);
-
-
+            this.openFolderMenuItem.Name = "openFolderMenuItem";
+            this.openFolderMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.openFolderMenuItem.Text = ConfigurationManager.AppSettings.Get("openFolderMenu");
+            this.openFolderMenuItem.Click += new System.EventHandler(this.openFolderMenuItem_Click);
         }
-        private void childMouseClick(object sender, MouseEventArgs e)
+
+        private void countClick(object sender, MouseEventArgs e)
         {
             if ((e.Button & MouseButtons.Left) != 0)
             {
-                IncreaseCounter(Child);
+                var counterType = iconMapping[(NotifyIcon)sender];
+                IncreaseCounter(counterType);
             }
         }
 
@@ -116,19 +121,11 @@ namespace PeopleCounter
             type.Counter++;
             UpdateIcon(type);
 
-            string textToWrite = $"{type.CSVIdentifier};{date.Year};{date.Month};{date.Day};{date.ToShortDateString()};{date.ToShortTimeString()};";
+            string textToWrite = string.Concat(type.CSVIdentifier, csvDelimiter, DateTime.Now.ToString(loggedDateTimeFormat));
             WriteToFile(yearFile, textToWrite);
             if (writeMonthlyFile)
             {
                 WriteToFile(monthFile, textToWrite);
-            }
-        }
-
-        private void adultMouseClick(object sender, MouseEventArgs e)
-        {
-            if ((e.Button & MouseButtons.Left) != 0)
-            {
-                IncreaseCounter(Adult);
             }
         }
 
@@ -223,6 +220,25 @@ namespace PeopleCounter
             //byte[] info = new UTF8Encoding(true).GetBytes(text + "\r\n");
             file.Write(text + "\r\n");
             file.Flush();
+        }
+
+        private void openFolderMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (Directory.Exists(this.csvFolderPath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = this.csvFolderPath,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0} Directory does not exist!", this.csvFolderPath));
+            }
         }
 
         /// Clean up any resources being used.
