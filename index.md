@@ -1,3 +1,12 @@
+
+# Short Description
+This program adds clickable notification icons which counts the number on clicks. It can be used to count grownups and children or any other group which has been configured. 
+
+![People counter](/assets/images/counter.png)
+
+For each click a new line will be written to a csv file.
+![CSV Content](assets/images/csv_content.png)
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/Daniel-Krueger/PeopleCounter/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
@@ -27,10 +36,6 @@ Syntax highlighted code block
 ```
 
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Daniel-Krueger/PeopleCounter/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
 ### Support or Contact
 
