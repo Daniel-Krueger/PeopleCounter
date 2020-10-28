@@ -10,10 +10,16 @@ For each click a new line will be written to a csv file.
 ![CSV Content](assets/images/csv_content.png)
 
 Afterwards you can use a program like excel to get an overview of your counts.
+
 ![Pivot view of csv content](assets/images/pivot_table.png)
 
+### Deutsche Beschreibung <!-- omit in toc -->
+Es gibt eine [Dokumentation](Besucherzähler.docx) in deutsch.
+
+### Download  <!-- omit in toc -->
+https://github.com/Daniel-Krueger/PeopleCounter/releases
+
 # Table of contents  <!-- omit in toc -->
-- [German description](#german-description)
 - [1. Setup and configuration](#1-setup-and-configuration)
   - [1.1. Installation](#11-installation)
   - [1.2. Configuration](#12-configuration)
@@ -25,8 +31,7 @@ Afterwards you can use a program like excel to get an overview of your counts.
   - [2.4. Notification icon is missing although the program is executed](#24-notification-icon-is-missing-although-the-program-is-executed)
   - [2.5. Updating the program](#25-updating-the-program)
 
-# German description
-Es gibt eine Dokumentation in [](Besucherzähler.docx)
+
 
 # 1. Setup and configuration
 ## 1.1. Installation
