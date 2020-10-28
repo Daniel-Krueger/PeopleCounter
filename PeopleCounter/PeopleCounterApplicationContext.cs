@@ -96,7 +96,7 @@ namespace PeopleCounter
             // 
             this.exitMenuItem.Name = "exitMenuItem";
             this.exitMenuItem.Size = new System.Drawing.Size(120, 22);
-            this.exitMenuItem.Text = "Beenden";
+            this.exitMenuItem.Text = ConfigurationManager.AppSettings.Get("exitMenu");
             this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
             // openFolderMenuItem

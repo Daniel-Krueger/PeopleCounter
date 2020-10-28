@@ -65,7 +65,7 @@
     <None Include="Add_to_startup.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="App.deutsch.config">
+    <None Include="PeopleCounter.exe.deutsch.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
