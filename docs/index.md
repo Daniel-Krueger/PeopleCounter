@@ -2,6 +2,7 @@
 - [Short Description](#short-description)
 - [Setup and configuration](#setup-and-configuration)
   - [Installation](#installation)
+  - [Configuration](#configuration)
 - [Remarks](#remarks)
 - [File is locked](#file-is-locked)
     - [Markdown](#markdown)
@@ -19,6 +20,26 @@ For each click a new line will be written to a csv file.
 # Setup and configuration
 ## Installation
 The program consist of a simple .exe file. Just run it, if you want to start counting. 
+
+
+## Configuration
+There are a few elements which can be configured:
+1. Folder in which the csv file will be written. 
+
+**Warning:** It's necessary that the current user has write permissions to this location. If the folder doesn't exist it should be created automatically.
+{: .notice--warning}
+2. If the csv file for the current month does not exist yet, it will be created and this header will be written to it.
+   
+**Warning:**  Make sure to use the same csv delimiter as defined below.
+{: .notice--warning}
+
+1. Once a user clicks on the icon the current time will be written to the csv file. The time will be written in the defined format. Since this is a csv file, you can decide whether you want to have:
+   - A single column with date and time
+   - A single column with time only
+   - Two columns
+2. Define the label which will be written for clocking in and out.
+3. Define the label for the icon when you are clocked in and out.
+![Configuration file](/assets/images/punchclock/punchclock_config_file.png)
 
 
 # Remarks
