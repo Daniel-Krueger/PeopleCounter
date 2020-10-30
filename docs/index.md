@@ -1,6 +1,6 @@
 
 
-# Short Description <!-- omit in toc -->
+# Notification icon counter <!-- omit in toc -->
 This program adds clickable notification icons which counts the number on clicks. It can be used to count grownups and children or any other group which has been configured. 
 
 ![People counter](assets/images/counter.png)
