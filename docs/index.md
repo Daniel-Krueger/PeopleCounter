@@ -13,11 +13,11 @@ Afterwards you can use a program like excel to get an overview of your counts.
 
 ![Pivot view of csv content](assets/images/pivot_table.png)
 
-### Deutsche Beschreibung <!-- omit in toc -->
+### Deutsche Dokumentation <!-- omit in toc -->
 Es gibt eine [Dokumentation](Besucherzähler.docx) in deutsch.
 
 ### Download  <!-- omit in toc -->
-https://github.com/Daniel-Krueger/PeopleCounter/releases
+Releases with a configuration for english and german can be found [here](https://github.com/Daniel-Krueger/PeopleCounter/releases)
 
 # Table of contents  <!-- omit in toc -->
 - [1. Setup and configuration](#1-setup-and-configuration)
